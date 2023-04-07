@@ -75,4 +75,66 @@ However, we cannot distinguish the quality of the wine well as we showed
 above, probably because we need more the number of data on wine or these
 characteristics on wine in data does not relate to the quality.
 
-# 2)
+# 2) Market segmentation
+
+## 2-1 Overview
+
+1.  Make a model to identify spam and remove this data.
+
+2.  (Now tryingh some methods)
+
+## 2-2 Data and Model (how to do)
+
+### 2-2-1 Data
+
+-   Data: social\_marketing.csv
+
+### 2-2-2 Data cleaning: Spam Removing
+
+1.  in actual data, we crate a dummy variable tha is spam or not.
+2.  with logit model(dependent variable: spam dummy, independent
+    variable: all other variables), estimates the probability of spam by
+    each individuals.
+3.  if the probability of spam is over 0.5(50%), the person are judge as
+    a spam.
+4.  Remove actual spam, adult and estimated spam from raw dataset. So
+    the number of observation in new dataset will decrease from 7882 to
+    7309.
+
+### 2-2-3 Model
+
+-   Group Correlation
+
+-   PCA
+
+-   K-means Clustering
+
+-   Hierachical Clustering
+
+-   now trying diverse methods but I will left only some methods that
+    can give us good results.
+
+### 2-3 Result
+
+#### Group Correlation
+
+<img src="./fig/2corr.png" width="50%" height="50%" style="display: block; margin: auto;" />
+
+From this graph, we can get as follow: - eight groups are there 1.
+college univ, online gamein, sports playing 2. fashion, cooking, beauty
+3. personal fitness, health nutrition, outdoors 4. art, tv film 5.
+crafts, automotive, news 6. politics, travel, computers 7. parenting,
+religion, sports fandom, food, school, family 8. shopping, chatter,
+photo sharing
+
+-   the correlation happens near categories
+
+#### PCA
+
+#### K-means Clustering
+
+#### Hierachical Clustering
+
+### 2-4 Conclusion
+
+### 2-5 Appendix
