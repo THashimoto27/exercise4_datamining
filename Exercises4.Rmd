@@ -295,7 +295,7 @@ ggcorrplot::ggcorrplot(cor(Z), hc.order = TRUE)
 ```
 
 
-```{r, echo=FALSE,out.width ="50%", out.height = "50%",fig.align='center',fig.show="hold"}
+```{r, echo=FALSE,out.width ="70%", out.height = "70%",fig.align='center',fig.show="hold"}
 knitr::include_graphics("./fig/2corr.png")
 ```
 
@@ -350,20 +350,7 @@ km = kmeans(Z, 2, nstart=50)
 #### Hierachical Clustering
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide',eval=FALSE}
-## CH Index
-k_grid = seq(2, 30, by=1)
-N = nrow(Z)
-CH_grid = foreach(k = k_grid, .combine='c') %do% {
-  cluster_k = kmeans(Z, k, nstart=50)
-  W = cluster_k$tot.withinss
-  B = cluster_k$betweenss
-  CH = (B/W)*((N-k)/(k-1))
-  CH
-}
-CH_result <- as.data.frame(cbind(k_grid,CH_grid))
-#max CH -> k=2 (is this adequate?)
 
-km = kmeans(Z, 2, nstart=50)
 ```
 
 ### 2-4 Conclusion
