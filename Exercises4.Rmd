@@ -125,20 +125,20 @@ ggsave("./fig/1avg.png")
 
 First, we shows the result of the PCA method, which looks like it can be good identification. 
 
-```{r, echo=FALSE,out.width ="70%", out.height = "50%",fig.align='center',fig.show="hold"}
+```{r, echo=FALSE,out.width ="50%", out.height = "50%",fig.align='center',fig.show="hold"}
 knitr::include_graphics("./fig/1pca.png")
 ```
 
 ### K-means
 
 Second, we shows the result of the K-means method (K=2). This is the graph of the actual data.
-```{r, echo=FALSE,out.width ="70%", out.height = "50%",fig.align='center',fig.show="hold"}
+```{r, echo=FALSE,out.width ="50%", out.height = "50%",fig.align='center',fig.show="hold"}
 knitr::include_graphics("./fig/1act2.png")
 ```
 
 And, this is the k-means graph that looks like being able to be the same as the actual data. So, we can think this method can distinguish data into two parts(x-axis=pH, y-axis=fixed.acidity) because these factors are different between white and red wines.
 
-```{r, echo=FALSE,out.width ="70%", out.height = "50%",fig.align='center',fig.show="hold"}
+```{r, echo=FALSE,out.width ="50%", out.height = "50%",fig.align='center',fig.show="hold"}
 knitr::include_graphics("./fig/1km1.png")
 ```
 
@@ -146,7 +146,7 @@ knitr::include_graphics("./fig/1km1.png")
 
 Third, we used Hierarchical clustering with the minimum linkage of "single", "complete" and "average". However, all of them looks like bad identification. Probably because Hierarchical clustering identify data into two parts step by step and so in the case of white and red wine(they looks like almost same characteristics) this method doesn't work well with only unsupervised technique.
 
-```{r, echo=FALSE,out.width ="70%", out.height = "50%",fig.align='center',fig.show="hold"}
+```{r, echo=FALSE,out.width ="50%", out.height = "50%",fig.align='center',fig.show="hold"}
 knitr::include_graphics("./fig/1sing.png")
 knitr::include_graphics("./fig/1comp.png")
 knitr::include_graphics("./fig/1avg.png")
@@ -202,7 +202,7 @@ ggsave("./fig/1km2.png")
 
 We cannot distinguish the quality of the wine in PCA.
 
-```{r, echo=FALSE,out.width ="70%", out.height = "50%",fig.align='center',fig.show="hold"}
+```{r, echo=FALSE,out.width ="50%", out.height = "50%",fig.align='center',fig.show="hold"}
 knitr::include_graphics("./fig/1pca2.png")
 ```
 
@@ -210,13 +210,13 @@ knitr::include_graphics("./fig/1pca2.png")
 
 At the actual data, We cannot distinguish the quality of the wine well.
 
-```{r, echo=FALSE,out.width ="70%", out.height = "50%",fig.align='center',fig.show="hold"}
+```{r, echo=FALSE,out.width ="50%", out.height = "50%",fig.align='center',fig.show="hold"}
 knitr::include_graphics("./fig/1act2.png")
 ```
 
 Therefore, we cannot judge that this clustering did work well.
 
-```{r, echo=FALSE,out.width ="70%", out.height = "50%",fig.align='center',fig.show="hold"}
+```{r, echo=FALSE,out.width ="50%", out.height = "50%",fig.align='center',fig.show="hold"}
 knitr::include_graphics("./fig/1km2.png")
 ```
 
