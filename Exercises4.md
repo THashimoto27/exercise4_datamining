@@ -120,12 +120,18 @@ characteristics on wine in data does not relate to the quality.
 
 <img src="./fig/2corr.png" width="80%" height="80%" style="display: block; margin: auto;" />
 
-From this graph, we can get as follow: - eight groups are there 1.
-college univ, online gamein, sports playing 2. fashion, cooking, beauty
-3. personal fitness, health nutrition, outdoors 4. art, tv film 5.
-crafts, automotive, news 6. politics, travel, computers 7. parenting,
-religion, sports fandom, food, school, family 8. shopping, chatter,
-photo sharing
+From this graph, we can get as follow:
+
+-   eight groups are there <br>
+
+    1.  college univ, online gamein, sports playing<br>
+    2.  fashion, cooking, beauty <br>
+    3.  personal fitness, health nutrition, outdoors <br>
+    4.  art, tv film <br>
+    5.  crafts, automotive, news <br>
+    6.  politics, travel, computers <br>
+    7.  parenting, religion, sports fandom, food, school, family <br>
+    8.  shopping, chatter, photo sharing <br>
 
 -   the correlation happens near categories
 
