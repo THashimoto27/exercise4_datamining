@@ -40,6 +40,14 @@ library(gamlr)
 
 ## 1-1 Procedures
 
+1. Distinguishing White and Red
+
+we used the method of PCA(rank=2) and the Clustering(K-means(K=2), Hierarchical clustering with "single", "complete" and "average")
+
+
+2. Distinguishing Quality
+
+we used the method of PCA(rank=2) and the Clustering(K-means(K=7)). Note that the reason of not using hierarchical clustering is that this way does not show
 
 ## 1-2 Result (White and Red)
 
@@ -80,7 +88,8 @@ ggsave("./fig/1act1.png")
 # Good identification
 ggplot(wine) + 
   geom_point(aes(pH,fixed.acidity, color=factor(wine_kmean$cluster)))+
-    labs(title="Plot of k-means(good identification)")
+    labs(title="Plot of k-means(good identification)") +
+   scale_color_manual(values=c("#00BFC4","#F8766D"))
 ggsave("./fig/1km1.png")
 
 
