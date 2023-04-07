@@ -118,7 +118,7 @@ characteristics on wine in data does not relate to the quality.
 
 #### Group Correlation
 
-<img src="./fig/2corr.png" width="100%" height="100%" style="display: block; margin: auto;" />
+<img src="./fig/2corr.png" width="80%" height="80%" style="display: block; margin: auto;" />
 
 From this graph, we can get as follow: - eight groups are there 1.
 college univ, online gamein, sports playing 2. fashion, cooking, beauty

@@ -295,7 +295,7 @@ ggcorrplot::ggcorrplot(cor(Z), hc.order = TRUE)
 ```
 
 
-```{r, echo=FALSE,out.width ="100%", out.height = "100%",fig.align='center',fig.show="hold"}
+```{r, echo=FALSE,out.width ="80%", out.height = "80%",fig.align='center',fig.show="hold"}
 knitr::include_graphics("./fig/2corr.png")
 ```
 
