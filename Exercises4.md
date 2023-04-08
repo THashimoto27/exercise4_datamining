@@ -141,21 +141,7 @@ as follow:
 7.  (PC7) parenting, religion, sports fandom, food, family <br>
 8.  (PC8) shopping, chatter, photo sharing <br>
 
-##### Robustness check (K-means Clustering)
-
-Also, to do robustness chek, I did K-means clusterinig.
-
-<img src="./fig/2km1.png" width="50%" height="50%" style="display: block; margin: auto;" /><img src="./fig/2km2.png" width="50%" height="50%" style="display: block; margin: auto;" /><img src="./fig/2km3.png" width="50%" height="50%" style="display: block; margin: auto;" /><img src="./fig/2km4.png" width="50%" height="50%" style="display: block; margin: auto;" />
-
-At the first picture, we can see tweets on beauty and politics does not
-relate to each others. But at the second picture, we can see tweets on
-travel and politics had positive relationship. Also, at the third
-picture, tweets on shopping and photo sharing had some positive
-relationship as well. However, it seems us that tweets on shopping and
-online gaming does not relate to each others.
-
-These results are consistent with eight groups that we identified from
-the method of the correlation and PCA.
+We also did robustness check with K-means method in Appendix 2-5-1.
 
 #### Which kind of groups is close to “Uncategorized” tweet?
 
@@ -247,7 +233,26 @@ if they make a plan of market research in real, such as save their time
 to being confusing which kind of groups they should put uncategorized
 tweets into.
 
-### 2-5 Appendix: Linear probability model
+### 2-5 Appendix
+
+#### 2-5-1: Robustness check (K-means Clustering)
+
+Also, to do robustness check, we did K-means clusterinig.
+
+<img src="./fig/2km1.png" width="50%" height="50%" style="display: block; margin: auto;" /><img src="./fig/2km2.png" width="50%" height="50%" style="display: block; margin: auto;" /><img src="./fig/2km3.png" width="50%" height="50%" style="display: block; margin: auto;" /><img src="./fig/2km4.png" width="50%" height="50%" style="display: block; margin: auto;" />
+
+At the first top left picture, we can see tweets on beauty and politics
+does not relate to each others. But at the second top right picture, we
+can see tweets on travel and politics had positive relationship. Also,
+at the third bottom left picture, tweets on shopping and photo sharing
+had some positive relationship as well. However, at the fourth bottom
+right picture, it seems us that tweets on shopping and online gaming
+does not relate to each others.
+
+These results are consistent with eight groups that we identified from
+the method of the correlation and PCA.
+
+#### 2-5-2: Linear probability model
 
 The linear probability model we used in this analysis is as follow:
 *u**n**c**a**t**e**g**o**r**i**z**e**d* *t**w**e**e**t**s* = *β*<sub>0</sub> + *β*\[*P**C*1−*P**C*8\] + *ε*

@@ -328,40 +328,7 @@ From these above graphs, we can identify eight groups on market segments as foll
   7. (PC7) parenting, religion, sports fandom, food, family <br>
   8. (PC8) shopping, chatter, photo sharing <br>
   
-
-##### Robustness check (K-means Clustering)
-
-Also, to do robustness chek, I did K-means clusterinig.
-
-```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide',eval=FALSE}
-Z = ndata[-1]/rowSums(ndata[-1])
-Z =Z[-c(5,35,36)]
-km = kmeans(Z, 8, nstart=50)
-
-ggplot(Z)+ 
-  geom_point(aes(politics, beauty, color=factor(km$cluster)))+labs(title="politics-bueauty looks independent")
-ggsave("./fig/2km1.png")
-ggplot(Z)+ 
-  geom_point(aes(politics, travel, color=factor(km$cluster)))+labs(title="politics-travel looks related")
-ggsave("./fig/2km2.png")
-ggplot(Z)+ 
-  geom_point(aes(shopping, photo_sharing, color=factor(km$cluster)))+labs(title="shopping-photo_sharing looks related")
-ggsave("./fig/2km3.png")
-ggplot(Z)+ 
-  geom_point(aes(shopping, online_gaming, color=factor(km$cluster)))+labs(title="shopping-online_gaming looks independent")
-ggsave("./fig/2km4.png")
-```
-
-```{r, echo=FALSE,out.width ="50%", out.height = "50%",fig.align='center',fig.show="hold"}
-knitr::include_graphics("./fig/2km1.png")
-knitr::include_graphics("./fig/2km2.png")
-knitr::include_graphics("./fig/2km3.png")
-knitr::include_graphics("./fig/2km4.png")
-```
-
-At the first picture, we can see tweets on beauty and politics does not relate to each others. But at the second picture, we can see tweets on travel and politics had positive relationship. Also, at the third picture, tweets on shopping and photo sharing had some positive relationship as well. However, it seems us that tweets on shopping and online gaming does not relate to each others.
-
-These results are consistent with eight groups that we identified from the method of the correlation and PCA.
+We also did robustness check with K-means method in Appendix 2-5-1.
 
 #### Which kind of groups is close to "Uncategorized" tweet?
 
@@ -396,7 +363,43 @@ For "NutrientH20", we suggested some points from these result. The first one is 
 
 Second, if "NutrientH20" find "uncategorized" tweets, they should think that they are in (2), (7) and (8) out of eight groups. This is helpful if they make a plan of market research in real, such as save their time to being confusing which kind of groups they should put uncategorized tweets into.
 
-### 2-5 Appendix: Linear probability model
+### 2-5 Appendix
+
+#### 2-5-1: Robustness check (K-means Clustering)
+
+Also, to do robustness check, we did K-means clusterinig.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide',eval=FALSE}
+Z = ndata[-1]/rowSums(ndata[-1])
+Z =Z[-c(5,35,36)]
+km = kmeans(Z, 8, nstart=50)
+
+ggplot(Z)+ 
+  geom_point(aes(politics, beauty, color=factor(km$cluster)))+labs(title="politics-bueauty looks independent")
+ggsave("./fig/2km1.png")
+ggplot(Z)+ 
+  geom_point(aes(politics, travel, color=factor(km$cluster)))+labs(title="politics-travel looks related")
+ggsave("./fig/2km2.png")
+ggplot(Z)+ 
+  geom_point(aes(shopping, photo_sharing, color=factor(km$cluster)))+labs(title="shopping-photo_sharing looks related")
+ggsave("./fig/2km3.png")
+ggplot(Z)+ 
+  geom_point(aes(shopping, online_gaming, color=factor(km$cluster)))+labs(title="shopping-online_gaming looks independent")
+ggsave("./fig/2km4.png")
+```
+
+```{r, echo=FALSE,out.width ="50%", out.height = "50%",fig.align='center',fig.show="hold"}
+knitr::include_graphics("./fig/2km1.png")
+knitr::include_graphics("./fig/2km2.png")
+knitr::include_graphics("./fig/2km3.png")
+knitr::include_graphics("./fig/2km4.png")
+```
+
+At the first top left picture, we can see tweets on beauty and politics does not relate to each others. But at the second top right picture, we can see tweets on travel and politics had positive relationship. Also, at the third bottom left picture, tweets on shopping and photo sharing had some positive relationship as well. However, at the fourth bottom right picture, it seems us that tweets on shopping and online gaming does not relate to each others.
+
+These results are consistent with eight groups that we identified from the method of the correlation and PCA.
+
+#### 2-5-2: Linear probability model
 
 The linear probability model we used in this analysis is as follow: 
 $$
