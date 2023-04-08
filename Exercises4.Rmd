@@ -34,6 +34,9 @@ library(rpart.plot)
 library(randomForest)
 library(gbm)
 library(gamlr)
+library(arules)
+library(knitr)
+library(modelsummary)
 ```
 
 # 1) Clustering and PCA
@@ -232,20 +235,20 @@ However, we cannot distinguish the quality of the wine well as we showed above, 
 
 ## 2-1 Overview
 
-1. Make a model to identify spam and remove this data.
+To understand market segments, we got two 
 
-2. (Now tryingh some methods)
+1. Eight groups from categorized items in the data
+
+2. Estimated which groups we should put "uncategorized" tweets into
+
+Also, from these results, we suggested two points for "NutrientH20" in the conclusion.
 
 
-## 2-2 Data and Model (how to do) 
+## 2-2 Data and cleaning
 
-### 2-2-1 Data
+At first, We used social_marketing.csv as a data, and did data cleaning as follow:
 
--  Data: social_marketing.csv
-
-### 2-2-2 Data cleaning: Spam Removing
-
-1. in actual data, we crate a dummy variable tha is spam or not.
+1. in actual data, we crate a dummy variable that is spam or not.
 2. with logit model(dependent variable: spam dummy, independent variable: all other variables), estimates the probability of spam by each individuals. 
 3. if the probability of spam is over 0.5(50%), the person are judge as a spam.
 4. Remove actual spam, adult and estimated spam from raw dataset. So the number of observation in new dataset will decrease from 7882 to 7309.
@@ -273,24 +276,20 @@ ndata <- ndata[-38]
 ndata <- ndata %>% filter(spam==0) %>% filter (adult==0)
 ```
 
-### 2-2-3 Model
+### 2-3 Model and Results
 
-- Group Correlation
-- PCA
-- K-means Clustering
-- Hierachical Clustering
+#### How can we make more some groups to understnad market segements?
 
-* now trying  diverse methods but I will left only some methods that can give us good results.
+The data we got had so many categorised, and so it was hard to understand the market and the trend of consumers' preference. So we tried to make more small groups from these data.
 
-### 2-3 Result
+##### Correlation
 
-#### Group Correlation
+First, we saw correlation between categorised items, and we got the result in the following.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide',eval=FALSE}
 # First normalize phrase counts to phrase frequencies.
 Z = ndata[-1]/rowSums(ndata[-1])
-Z =Z[-36]
-Z =Z[-35]
+Z =Z[-c(5,35,36)]
 ggcorrplot::ggcorrplot(cor(Z), hc.order = TRUE)
 ```
 
@@ -299,62 +298,161 @@ ggcorrplot::ggcorrplot(cor(Z), hc.order = TRUE)
 knitr::include_graphics("./fig/2corr.png")
 ```
 
-From this graph, we can get as follow:
+##### PCA and Correlation
 
-- eight groups are there <br>
+Second, we thought there were eight groups from the above result, and also did PCA with rank 8 and saw the correlation between PCs and categoriesed item as follow:
 
-  1. college univ, online gamein, sports playing<br>
-  2. fashion, cooking, beauty <br>
-  3. personal fitness, health nutrition, outdoors <br>
-  4. art, tv film <br>
-  5. crafts, automotive, news <br>
-  6. politics, travel, computers <br>
-  7. parenting, religion, sports fandom, food, school, family <br>
-  8. shopping, chatter, photo sharing <br>
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide',eval=FALSE}
+pca2 = prcomp(Z, scale=TRUE, rank=8)
+pca2_data <- as.data.frame(cbind(pca2$x[, 1:8],Z))
+
+cor_PC <- as.data.frame(cor(pca2_data))
+cor_PC <- cor_PC[-c(1:8),-c(9:41)]
+heatmap(as.matrix(cor_PC))
+```
+
+```{r, echo=FALSE,out.width ="80%", out.height = "80%",fig.align='center',fig.show="hold"}
+knitr::include_graphics("./fig/2heatmap.png")
+```
+
+##### Eight groups
+
+From these above graphs, we can identify eight groups on market segments as follow:
+
+  1. (PC1) business small business, current events   <br>
+  2. (PC2) crafts, home and garden dating, school <br>
+  3. (PC3) personal fitness, health nutrition, outdoors, travel, politics, computers <br> 
+  4. (PC4) art, tv film <br>
+  5. (PC5) fashion, cooking, beauty <br>
+  6. (PC6) college univ, online gaming, sports playing<br>
+  7. (PC7) parenting, religion, sports fandom, food, family <br>
+  8. (PC8) shopping, chatter, photo sharing <br>
   
-- the correlation happens near categories
 
+##### Robustness check (K-means Clustering)
 
-
-#### PCA
-
-```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide',eval=FALSE}
-pca2 = prcomp(Z, scale=TRUE, rank=2)
-pca2_data <- as.data.frame(cbind(pca2$x[, 1:2],Z))
-
-ggplot(pca2_data, aes(x = family, y = food, color = PC2)) +
-  geom_point(alpha = 0.7) +
-  theme_bw() +
-  #labs(title = "PCA Plot of Wine Data", x = "PC1", y = "PC2") +
-  theme(legend.title = element_text(size = 12), legend.text = element_text(size = 10))
-
-```
-
-#### K-means Clustering
+Also, to do robustness chek, I did K-means clusterinig.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide',eval=FALSE}
-## CH Index
-k_grid = seq(2, 30, by=1)
-N = nrow(Z)
-CH_grid = foreach(k = k_grid, .combine='c') %do% {
-  cluster_k = kmeans(Z, k, nstart=50)
-  W = cluster_k$tot.withinss
-  B = cluster_k$betweenss
-  CH = (B/W)*((N-k)/(k-1))
-  CH
-}
-CH_result <- as.data.frame(cbind(k_grid,CH_grid))
-#max CH -> k=2 (is this adequate?)
+Z = ndata[-1]/rowSums(ndata[-1])
+Z =Z[-c(5,35,36)]
+km = kmeans(Z, 8, nstart=50)
 
-km = kmeans(Z, 2, nstart=50)
+ggplot(Z)+ 
+  geom_point(aes(politics, beauty, color=factor(km$cluster)))+labs(title="politics-bueauty looks independent")
+ggsave("./fig/2km1.png")
+ggplot(Z)+ 
+  geom_point(aes(politics, travel, color=factor(km$cluster)))+labs(title="politics-travel looks related")
+ggsave("./fig/2km2.png")
+ggplot(Z)+ 
+  geom_point(aes(shopping, photo_sharing, color=factor(km$cluster)))+labs(title="shopping-photo_sharing looks related")
+ggsave("./fig/2km3.png")
+ggplot(Z)+ 
+  geom_point(aes(shopping, online_gaming, color=factor(km$cluster)))+labs(title="shopping-online_gaming looks independent")
+ggsave("./fig/2km4.png")
 ```
 
-#### Hierachical Clustering
+```{r, echo=FALSE,out.width ="50%", out.height = "50%",fig.align='center',fig.show="hold"}
+knitr::include_graphics("./fig/2km1.png")
+knitr::include_graphics("./fig/2km2.png")
+knitr::include_graphics("./fig/2km3.png")
+knitr::include_graphics("./fig/2km4.png")
+```
+
+At the first picture, we can see tweets on beauty and politics does not relate to each others. But at the second picture, we can see tweets on travel and politics had positive relationship. Also, at the third picture, tweets on shopping and photo sharing had some positive relationship as well. However, it seems us that tweets on shopping and online gaming does not relate to each others.
+
+These results are consistent with eight groups that we identified from the method of the correlation and PCA.
+
+#### Which kind of groups is close to "Uncategorized" tweet?
+
+Also, we have identified which kind of groups "uncategorized" tweets are close to.  So we used the linear probability model(see detail in Appendix). The coefficients that I got from the estimation is as follow:
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide',eval=FALSE}
+Z = ndata[-1]/rowSums(ndata[-1])
+Z =Z[-c(35,36)]
+Z <- as.data.frame(cbind(pca2$x[, 1:8],Z))
 
+lpm = lm(uncategorized ~ PC1 + PC2 + PC3 + PC4 + PC5+PC6+PC7+PC8,data = Z)
+summary(lpm)
 ```
+
+```{r, echo=FALSE}
+knitr::kable(c(PC1="-0.00154***", PC2="0.00086***", PC3="-0.00056*", PC4="-0.00050*", PC5="-0.00032", PC6="-0.00278***", PC7="0.00064*", PC8="0.00078*", Intercept="0.02301***"))
+```
+
+From the result, PC2, PC7 and PC8 are the almost same positive coefficients. Combined Combined with Correlation and PCA's heatmap, we can think **the uncategorized tweet might be related to "art", "tv film", and "business"**
 
 ### 2-4 Conclusion
 
-### 2-5 Appendix
+#### Summarized our results
+
+To understand market segmentation easier, we suggested eight groups from diverse categorized items. That is (1) business small business, current events, (2) crafts, home and garden dating, school, (3) personal fitness, health nutrition, outdoors, travel, politics, computers, (4) art, tv film, (5) fashion, cooking, beauty, (6) college univ, online gaming, sports playing, (7) parenting, religion, sports fandom, food, family, and (8) shopping, chatter, photo sharing.
+
+Also, we combined the result of these groups and the linear probability model and estimated which kind of groups were close to "uncategorized". From the result, we could think "uncategorized" tweets might be related to "art", "tv film", and "business".
+
+#### Suggestion for "NutrientH20"
+
+For "NutrientH20", we suggested some points from these result. The first one is "NutrientH20" should set one targets from eight groups to sell drinks. As we showed, eight groups are related to one each other. Also, it is not realistic to target all categorized consumer but they can do to one of eight groups. So please refer to eight groups that we identified when making a strategy on market targeting.
+
+Second, if "NutrientH20" find "uncategorized" tweets, they should think that they are in (2), (7) and (8) out of eight groups. This is helpful if they make a plan of market research in real, such as save their time to being confusing which kind of groups they should put uncategorized tweets into.
+
+### 2-5 Appendix: Linear probability model
+
+The linear probability model we used in this analysis is as follow: 
+$$
+uncategorized\ tweets = \beta_0+ \beta[PC1-PC8]+\varepsilon
+$$
+The reason that we used the linear probability model is that that does not lose the information on the number of uncategorized tweets.(if the logit model, we have to create new dummy, uncategorized tweet or not. But in this case, we will lose the information on the number of uncategorized tweets.)
+
+Also the detailed of the result is as follow:
+
+```
+lm(formula = uncategorized ~ PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + 
+    PC7 + PC8, data = Z)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.04850 -0.02167 -0.00760  0.01287  0.35468 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  0.0230056  0.0003588  64.112  < 2e-16 ***
+PC1         -0.0015385  0.0002111  -7.288 3.49e-13 ***
+PC2          0.0008640  0.0002211   3.907 9.42e-05 ***
+PC3         -0.0005596  0.0002319  -2.413   0.0158 *  
+PC4         -0.0004999  0.0002451  -2.039   0.0414 *  
+PC5         -0.0003249  0.0002535  -1.282   0.2000    
+PC6         -0.0027772  0.0002842  -9.774  < 2e-16 ***
+PC7          0.0006390  0.0002976   2.147   0.0318 *  
+PC8          0.0007779  0.0003287   2.366   0.0180 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.03068 on 7300 degrees of freedom
+Multiple R-squared:  0.02481,	Adjusted R-squared:  0.02374 
+F-statistic: 23.22 on 8 and 7300 DF,  p-value: < 2.2e-16
+```
+
+\newpage
+
+# Association rules for grocery purchases
+
+## 3-1 Overview
+
+## 3-2 Data and Model
+
+## 3-3 Results
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide',eval=FALSE}
+data("Groceries")
+frequent_itemsets <- apriori(Groceries, parameter = list(supp = 0.1))
+inspect(frequent_itemsets)
+play_list <- read.csv("playlists.csv")
+transactions_trans <- read.transactions(data = play_list$grocery, 
+                                         format = "single", 
+                                         cols = c("item_id"))
+
+frequent_itemsets <- apriori(play_list$grocery, parameter = list(supp = 0.1))
+```
+
+## 3-4 Conclusion
