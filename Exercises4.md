@@ -103,22 +103,22 @@ as follow:
     the number of observation in new dataset will decrease from 7882 to
     7309.
 
-### 2-3 Model and Results
+## 2-3 Model and Results
 
-#### How can we make more some groups to understnad market segements?
+### How can we make more some groups to understnad market segements?
 
 The data we got had so many categorised, and so it was hard to
 understand the market and the trend of consumers’ preference. So we
 tried to make more small groups from these data.
 
-##### Correlation
+#### Correlation
 
 First, we saw correlation between categorised items, and we got the
 result in the following.
 
 <img src="./fig/2corr.png" width="80%" height="80%" style="display: block; margin: auto;" />
 
-##### PCA and Correlation
+#### PCA and Correlation
 
 Second, we thought there were eight groups from the above result, and
 also did PCA with rank 8 and saw the correlation between PCs and
@@ -143,7 +143,7 @@ as follow:
 
 We also did robustness check with K-means method in Appendix 2-5-1.
 
-#### Which kind of groups is close to “Uncategorized” tweet?
+### Which kind of groups is close to “Uncategorized” tweet?
 
 Also, we have identified which kind of groups “uncategorized” tweets are
 close to. So we used the linear probability model(see detail in
@@ -201,9 +201,9 @@ coefficients. Combined Combined with Correlation and PCA’s heatmap, we
 can think **the uncategorized tweet might be related to “art”, “tv
 film”, and “business”**
 
-### 2-4 Conclusion
+## 2-4 Conclusion
 
-#### Summarized our results
+### Summarized our results
 
 To understand market segmentation easier, we suggested eight groups from
 diverse categorized items. That is (1) business small business, current
@@ -218,7 +218,7 @@ model and estimated which kind of groups were close to “uncategorized”.
 From the result, we could think “uncategorized” tweets might be related
 to “art”, “tv film”, and “business”.
 
-#### Suggestion for “NutrientH20”
+### Suggestion for “NutrientH20”
 
 For “NutrientH20”, we suggested some points from these result. The first
 one is “NutrientH20” should set one targets from eight groups to sell
@@ -233,9 +233,9 @@ if they make a plan of market research in real, such as save their time
 to being confusing which kind of groups they should put uncategorized
 tweets into.
 
-### 2-5 Appendix
+## 2-5 Appendix
 
-#### 2-5-1: Robustness check (K-means Clustering)
+### 2-5-1: Robustness check (K-means Clustering)
 
 Also, to do robustness check, we did K-means clusterinig.
 
@@ -252,7 +252,7 @@ does not relate to each others.
 These results are consistent with eight groups that we identified from
 the method of the correlation and PCA.
 
-#### 2-5-2: Linear probability model
+### 2-5-2: Linear probability model
 
 The linear probability model we used in this analysis is as follow:
 *u**n**c**a**t**e**g**o**r**i**z**e**d* *t**w**e**e**t**s* = *β*<sub>0</sub> + *β*\[*P**C*1−*P**C*8\] + *ε*
