@@ -22,6 +22,35 @@ good identification.
 
 <img src="./fig/1pca.png" width="50%" height="50%" style="display: block; margin: auto;" />
 
+Also, at another approach,
+
+    [Result]
+    Importance of first k=6 (out of 11) components:
+                              PC1    PC2    PC3     PC4     PC5     PC6
+    Standard deviation     1.7407 1.5792 1.2475 0.98517 0.84845 0.77930
+    Proportion of Variance 0.2754 0.2267 0.1415 0.08823 0.06544 0.05521
+    Cumulative Proportion  0.2754 0.5021 0.6436 0.73187 0.79732 0.85253
+
+**From the results, we can notice that PC2 explains 50% of the
+variations, and PC6 explains 85% as cumulative.**
+
+Let’s first work on PCA1 and PCA2.
+
+<img src="./fig/1pca2.png" width="70%" height="70%" style="display: block; margin: auto;" /><img src="./fig/1pca3.png" width="70%" height="70%" style="display: block; margin: auto;" />
+
+PCA1 and PCA2 were able to distinguish between red wines and white
+wines. There are some blue points lay in the red circle, that’s because
+their chemical properties must be very close to each others. However, in
+general the algorithm succeed in differentiating the colors. In terms of
+quality, it seems the higher quality wines are the points below 0 for
+PCA2 and above 0 for PCA1 in general. However, let’s understand how PCA1
+and 2 are formed.
+
+<img src="./fig/1pca4.png" width="70%" height="70%" style="display: block; margin: auto;" /><img src="./fig/1pca5.png" width="70%" height="70%" style="display: block; margin: auto;" />
+From the graph above we can know that quality is negatively correlated
+with density, fixed acidity, chlorides. On the other hand, it is
+positively correlated with alcohol.
+
 ### K-means
 
 Second, we shows the result of the K-means method (K=2). This is the

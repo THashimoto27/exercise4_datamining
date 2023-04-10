@@ -37,6 +37,9 @@ library(gamlr)
 library(arules)
 library(knitr)
 library(modelsummary)
+library (ClusterR)  # for kmeans++
+library(devtools)
+library(ggfortify)
 ```
 
 # 1) Clustering and PCA
@@ -131,6 +134,82 @@ First, we shows the result of the PCA method, which looks like it can be good id
 ```{r, echo=FALSE,out.width ="50%", out.height = "50%",fig.align='center',fig.show="hold"}
 knitr::include_graphics("./fig/1pca.png")
 ```
+
+Also, at another approach, 
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide',eval=FALSE}
+X = wine[,-(12:13)]
+X = scale(X, center=TRUE, scale=TRUE)
+mu = attr(X,"scaled:center")
+sigma = attr(X,"scaled:scale")
+
+wine.pca1 = prcomp(X, rank = 6)
+summary(wine.pca1)
+str(wine.pca1)
+```
+
+```
+[Result]
+Importance of first k=6 (out of 11) components:
+                          PC1    PC2    PC3     PC4     PC5     PC6
+Standard deviation     1.7407 1.5792 1.2475 0.98517 0.84845 0.77930
+Proportion of Variance 0.2754 0.2267 0.1415 0.08823 0.06544 0.05521
+Cumulative Proportion  0.2754 0.5021 0.6436 0.73187 0.79732 0.85253
+```
+**From the results, we can notice that PC2 explains 50% of the variations, and PC6 explains 85% as cumulative.**
+
+
+
+Let's first work on PCA1 and PCA2.
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide',eval=FALSE}
+loadings = wine.pca1$rotation
+scores = wine.pca1$x
+wine2 = cbind(wine, wine.pca1$x[,1:6]) 
+```
+
+
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide',eval=FALSE}
+ggplot(wine2, aes(PC1, PC2, col=quality)) + 
+  geom_point(shape = "circle", size = 1.5) +
+ scale_color_viridis_c(option = "magma", direction = 1) +
+ theme_minimal()
+ggsave("./fig/1pca2.png")
+
+ggplot(wine2, aes(PC1, PC2, col=color, fill=color)) + 
+  stat_ellipse(geom= "polygon", col="black", alpha=0.5) +
+  geom_point(shape = 21, col = "black")+
+   theme_minimal()
+ggsave("./fig/1pca3.png")
+#larger alcohol and smaller density is correlated with quality
+```
+
+```{r, echo=FALSE,out.width ="70%", out.height = "70%",fig.align='center',fig.show="hold"}
+knitr::include_graphics("./fig/1pca2.png")
+knitr::include_graphics("./fig/1pca3.png")
+```
+
+PCA1 and PCA2 were able to distinguish between red wines and white wines. There are some blue points lay in the red circle, that's because their chemical properties must be very close to each others. However, in general the algorithm succeed in differentiating the colors. In terms of quality, it seems the higher quality wines are the points below 0 for PCA2 and above 0 for PCA1 in general. However, let's understand how PCA1 and 2 are formed.
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide',eval=FALSE}
+autoplot(wine.pca1, data = wine, colour = 'color', alpha = .9,
+loadings = TRUE, loading.color = "red",
+loadings.label = TRUE, loadings.label.size = 3)
+autoplot(wine.pca1, data = wine, colour = 'quality', alpha = .9,
+loadings = TRUE, loading.color = "red",
+loadings.label = TRUE, loadings.label.size = 3)
+```
+
+```{r, echo=FALSE,out.width ="70%", out.height = "70%",fig.align='center',fig.show="hold"}
+knitr::include_graphics("./fig/1pca4.png")
+knitr::include_graphics("./fig/1pca5.png")
+```
+From the graph above we can know that quality is negatively correlated with density, fixed acidity, chlorides. On the other hand, it is positively correlated with alcohol. 
 
 ### K-means
 
