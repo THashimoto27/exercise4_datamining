@@ -47,6 +47,7 @@ PCA2 and above 0 for PCA1 in general. However, let’s understand how PCA1
 and 2 are formed.
 
 <img src="./fig/1pca4.png" width="70%" height="70%" style="display: block; margin: auto;" /><img src="./fig/1pca5.png" width="70%" height="70%" style="display: block; margin: auto;" />
+
 From the graph above we can know that quality is negatively correlated
 with density, fixed acidity, chlorides. On the other hand, it is
 positively correlated with alcohol.

@@ -205,10 +205,12 @@ loadings = TRUE, loading.color = "red",
 loadings.label = TRUE, loadings.label.size = 3)
 ```
 
+
 ```{r, echo=FALSE,out.width ="70%", out.height = "70%",fig.align='center',fig.show="hold"}
 knitr::include_graphics("./fig/1pca4.png")
 knitr::include_graphics("./fig/1pca5.png")
 ```
+
 From the graph above we can know that quality is negatively correlated with density, fixed acidity, chlorides. On the other hand, it is positively correlated with alcohol. 
 
 ### K-means
