@@ -321,10 +321,42 @@ Also the detailed of the result is as follow:
 
 # Association rules for grocery purchases
 
-## 3-1 Overview
+## 3-1 Overview, Data and Model
 
-## 3-2 Data and Model
+-   <Data:%5Bgroceries.txt>\](groceries.txt) <br>
+-   At first, we did Data cleaning for aplying for apriori function in
+    the package of the “arules”. That includes each people’s id and data
+    of something they bought. <br>
+-   Next, we crated grphml data from the apriori function with support =
+    0.005, condience=0.1, maxlen = 4, and lift &gt;2. Regarding
+    selecting these parameters, we are careful of what some data had bot
+    high confidence and high supports because they are considered a
+    strong rule.<br>
+-   Finally, we used Gephi to make a grpah from graphml data
 
-## 3-3 Results
+## 3-2 Results and Conlcusion
 
-## 3-4 Conclusion
+<img src="./fig/3plot.png" width="80%" height="80%" style="display: block; margin: auto;" /><img src="./fig/node.png" width="80%" height="80%" style="display: block; margin: auto;" />
+
+The former plot is the support-confidence plot. The latter plot is the
+graphml plot.
+
+For the former plot, as we mentioned before, we can see that some data
+has high supports and high confidence.
+
+For the latter plot, we can find somethings as follow:
+
+-   Overall, the connection between vegetables, meats and fruits are
+    strong. This means all of these products are bought by consumers
+    daily.
+
+-   root vegetables and other vegetables are strong connection. So few
+    consumer will buy root vegetables. <br>
+
+-   consumers who bought whole milk bought dairy products like yougrt,
+    curd and butter. Probably because these products are located in near
+    place and so consumers tends to buy other dairy products on that
+    way. <br>
+
+-   frankfurter and tropical fruit’s connection is a little bit of
+    strong probably because consumers want them to do BBQ.

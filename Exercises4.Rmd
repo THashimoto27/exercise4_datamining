@@ -34,12 +34,14 @@ library(rpart.plot)
 library(randomForest)
 library(gbm)
 library(gamlr)
-library(arules)
 library(knitr)
 library(modelsummary)
 library (ClusterR)  # for kmeans++
 library(devtools)
 library(ggfortify)
+library(igraph)
+library(arules)  # has a big ecosystem of packages built around it
+library(arulesViz)
 ```
 
 # 1) Clustering and PCA
@@ -521,22 +523,81 @@ F-statistic: 23.22 on 8 and 7300 DF,  p-value: < 2.2e-16
 
 # Association rules for grocery purchases
 
-## 3-1 Overview
+## 3-1 Overview, Data and Model
 
-## 3-2 Data and Model
+- Data:[groceries.txt](groceries.txt) <br>
+- At first, we did Data cleaning for aplying for apriori function in the package of the "arules". That includes each people's id and data of something they bought. <br>
+- Next, we crated grphml data from the apriori function with support = 0.005, condience=0.1, maxlen = 4, and lift >2. Regarding selecting these parameters, we are careful of what some data had bot high confidence and high supports because they are considered a strong rule.<br>
+- Finally, we used Gephi to make a grpah from graphml data
 
-## 3-3 Results
+
+## 3-2 Results and Conlcusion
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide',eval=FALSE}
-data("Groceries")
-frequent_itemsets <- apriori(Groceries, parameter = list(supp = 0.1))
-inspect(frequent_itemsets)
-play_list <- read.csv("playlists.csv")
-transactions_trans <- read.transactions(data = play_list$grocery, 
-                                         format = "single", 
-                                         cols = c("item_id"))
+groceries = read.csv("groceries.txt", header=FALSE)
 
-frequent_itemsets <- apriori(play_list$grocery, parameter = list(supp = 0.1))
+## Data cleaning
+# Data-> ID + Word
+id=1
+data = data.frame()
+for (row in 1:nrow(groceries)){
+  for (column in 1: ncol(groceries)){
+    if(groceries[row,column]!=""){
+      if(nrow(data)==0){
+        data=as.data.frame(cbind(id,groceries[row,column]))
+      }else{
+        data=as.data.frame(rbind(data,cbind(id,groceries[row,column]))) 
+      }
+    }
+  }
+  id=id+1
+}
+
+# Turn id into a factor
+data$id = factor(data$id)
+
+# First split data into a list of artists for each user
+grceries_split = split(x=data$V2, f=data$id)
+
+## Remove duplicates ("de-dupe")
+groceries_d = lapply(grceries_split, unique)
+
+## Cast this variable as a special arules "transactions" class.
+groc = as(groceries_d, "transactions")
+
+## Cast this variable as a special arules "transactions" class.
+rules = apriori(groc, 
+	parameter=list(support=.001, confidence=.01, maxlen=4))
+
+png("./fig/3plot.png")
+plot(rules, method='two-key plot')
+dev.off()
+
+groc_graph = associations2igraph(subset(rules, lift>2), associationsAsNodes = FALSE)
+igraph::write_graph(groc_graph, file='groc_graph.graphml', format = "graphml")
 ```
 
-## 3-4 Conclusion
+
+```{r, echo=FALSE,out.width ="80%", out.height = "80%",fig.align='center',fig.show="hold"}
+knitr::include_graphics("./fig/3plot.png")
+knitr::include_graphics("./fig/node.png")
+```
+
+The former plot is the support-confidence plot.
+The latter plot is the graphml plot.
+
+For the former plot, as we mentioned before, we can see that some data has high supports and high confidence.
+
+For the latter plot, we can find somethings as follow:
+
+* Overall, the connection between vegetables, meats and fruits are strong. This means all of these products are bought by consumers daily.
+
+* root vegetables and other vegetables are strong connection. So few consumer will buy root vegetables. <br>
+
+* consumers who bought whole milk bought dairy products like yougrt, curd and butter. Probably because these products are located in near place and so consumers tends to buy other dairy products on that way. <br>
+
+* frankfurter and tropical fruit's connection is a little bit of strong probably because consumers want them to do BBQ.
+
+
+
+
