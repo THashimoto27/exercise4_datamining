@@ -336,7 +336,9 @@ Also the detailed of the result is as follow:
 
 ## 3-2 Results and Conlcusion
 
-<img src="./fig/3plot.png" width="80%" height="80%" style="display: block; margin: auto;" /><img src="./fig/node.png" width="80%" height="80%" style="display: block; margin: auto;" />
+<img src="./fig/3plot.png" width="50%" height="50%" style="display: block; margin: auto;" />
+
+<img src="./fig/node.png" width="80%" height="80%" style="display: block; margin: auto;" />
 
 The former plot is the support-confidence plot. The latter plot is the
 graphml plot.

@@ -577,9 +577,11 @@ groc_graph = associations2igraph(subset(rules, lift>2), associationsAsNodes = FA
 igraph::write_graph(groc_graph, file='groc_graph.graphml', format = "graphml")
 ```
 
-
-```{r, echo=FALSE,out.width ="80%", out.height = "80%",fig.align='center',fig.show="hold"}
+```{r, echo=FALSE,out.width ="50%", out.height = "50%",fig.align='center'}
 knitr::include_graphics("./fig/3plot.png")
+```
+
+```{r, echo=FALSE,out.width ="80%", out.height = "80%",fig.align='center'}
 knitr::include_graphics("./fig/node.png")
 ```
 
