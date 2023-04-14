@@ -331,11 +331,17 @@ Also, from these results, we suggested two points for "NutrientH20" in the concl
 
 At first, We used social_marketing.csv as a data, and did data cleaning as follow:
 
-1. in actual data, we crate a dummy variable that is spam or not.
-2. with logit model(dependent variable: spam dummy, independent variable: all other variables), estimates the probability of spam by each individuals. 
-3. if the probability of spam is over 0.5(50%), the person are judge as a spam.
-4. Remove actual spam, adult and estimated spam from raw dataset. So the number of observation in new dataset will decrease from 7882 to 7309.
+1. in actual data, we crate a dummy variable that is spam or not.<br>
+2. with logit model(dependent variable: spam dummy, independent variable: following variables), estimates the probability of spam by each individuals. <br>
 
+$$
+\begin{aligned}
+spam&=\beta_0+\beta [ adult\times(all\ variables)+uncategorized\times(all\ variables) \\&+dating\times(all\ variables)+news\times(all\ variables)+current_events\times(all\ variables)]+\varepsilon
+\end{aligned}
+$$
+
+3. if the probability of spam is over 0.5(50%), the person are judge as a spam.<br>
+4. Remove actual spam, adult and estimated spam from raw dataset. So the number of observation in new dataset will decrease from 7882 to 7306.<br>
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide',eval=FALSE}
 social_marketing <- read.csv("social_marketing.csv")
@@ -343,14 +349,16 @@ social_marketing <- read.csv("social_marketing.csv")
 ## Logit
 data <- social_marketing[-1]
 data <- data %>% mutate(spam = ifelse(spam>=1,1,0))
-logit_spam = glm(spam ~ ., data=data, family='binomial')
+logit_spam = glm(spam ~adult:.+uncategorized:.+dating:.+news:.+current_events:., data=data, family='binomial')
 
 phat_test_logit_spam = predict(logit_spam, data, type='response')
 yhat_test_logit_spam = ifelse(phat_test_logit_spam > 0.5, 1, 0)
 confusion_out_logit = table(y = data$spam,
 yhat = yhat_test_logit_spam)
-precision_out=1-(confusion_out_logit[2,1]/(confusion_out_logit[2,1]+confusion_out_logit[2,2]))
-# precision_out = 81 % (this model can identify spma or not in the probability of 81% )
+accuracy_out=1- (confusion_out_logit[2,1]+confusion_out_logit[1,2])/sum(confusion_out_logit)
+TPR_logit =  (confusion_out_logit[2,2])/(confusion_out_logit[2,1]+confusion_out_logit[2,2])
+FPR_logit = (confusion_out_logit[1,2])/(confusion_out_logit[1,1]+confusion_out_logit[1,2])
+FDR_logit =  (confusion_out_logit[1,2])/(confusion_out_logit[1,2]+confusion_out_logit[2,2])
 
 # besides of actual spam and adult, predict spam should be removed from the dataset
 ndata <- as.data.frame(cbind(social_marketing,yhat_test_logit_spam))
@@ -358,6 +366,16 @@ ndata <- ndata %>% mutate(spam = ifelse(yhat_test_logit_spam==1 | spam==1,1,0))
 ndata <- ndata[-38]
 ndata <- ndata %>% filter(spam==0) %>% filter (adult==0)
 ```
+
+
+Note that the indicies of the result of the logit model is as follow:
+```{r, echo=FALSE,out.width ="50%", out.height = "70%",fig.align='center'}
+table <- matrix(c(0.994, 0.55, 0.0003, 0.1), nrow = 1, ncol = 4, byrow = TRUE)
+colnames(table) <- c("accuracy", "TPR","FPR","FDR")
+knitr::kable(table,caption = "the output of LPM and Logit")
+```
+
+From the result, although TPR is 55%(that is the maximum value that I found), other variables shows good result.
 
 ## 2-3 Model and Results
 
@@ -390,7 +408,7 @@ pca2 = prcomp(Z, scale=TRUE, rank=8)
 pca2_data <- as.data.frame(cbind(pca2$x[, 1:8],Z))
 
 cor_PC <- as.data.frame(cor(pca2_data))
-cor_PC <- cor_PC[-c(1:8),-c(9:41)]
+cor_PC <- cor_PC[-c(1:8),-c(9:42)]
 heatmap(as.matrix(cor_PC))
 ```
 
@@ -402,14 +420,15 @@ knitr::include_graphics("./fig/2heatmap.png")
 
 From these above graphs, we can identify eight groups on market segments as follow:
 
-  1. (PC1) business small business, current events   <br>
-  2. (PC2) crafts, home and garden dating, school <br>
-  3. (PC3) personal fitness, health nutrition, outdoors, travel, politics, computers <br> 
-  4. (PC4) art, tv film <br>
-  5. (PC5) fashion, cooking, beauty <br>
-  6. (PC6) college univ, online gaming, sports playing<br>
-  7. (PC7) parenting, religion, sports fandom, food, family <br>
-  8. (PC8) shopping, chatter, photo sharing <br>
+  1. (PC1) chatter, shopping, photo_sharing <br>
+  2. (PC2) health nutrition, personal fitness, outdoors<br>
+  3. (PC3) fashion, cooking, beauty <br>
+  4. (PC4) college univ, online gaming, sports playing<br>
+  5. (PC5) eco, home and garden, crafts<br>
+  6. (PC6) current_events, small_business, business, news
+  7. (PC7) computers, travel, politics, dating
+  8. (PC8) music, tv_film, news
+
   
 We also did robustness check with K-means method in Appendix 2-5-1.
 
@@ -427,24 +446,24 @@ summary(lpm)
 ```
 
 ```{r, echo=FALSE}
-knitr::kable(c(PC1="-0.00154***", PC2="0.00086***", PC3="-0.00056*", PC4="-0.00050*", PC5="-0.00032", PC6="-0.00278***", PC7="0.00064*", PC8="0.00078*", Intercept="0.02301***"))
+knitr::kable(c(PC1="0.0015361***", PC2="-0.0008606***", PC3="0.0005582*", PC4="0.0004989*", PC5="0.0003274", PC6="0.00277598***", PC7="-0.0006407*", PC8="-0.0007794*", Intercept="0.02301***"))
 ```
 
-From the result, PC2, PC7 and PC8 are the almost same positive coefficients. Combined Combined with Correlation and PCA's heatmap, we can think **the uncategorized tweet might be related to "art", "tv film", and "business"**
+From the result, PC1 and PC6 are the positive coefficients and high coefficient values, and out of them the coefficient of the PC6 is highest. So we can think **the uncategorized tweet might be related to "current_events", "business", "small_business", and "news"**
 
 ## 2-4 Conclusion
 
 ### Summarized our results
 
-To understand market segmentation easier, we suggested eight groups from diverse categorized items. That is (1) business small business, current events, (2) crafts, home and garden dating, school, (3) personal fitness, health nutrition, outdoors, travel, politics, computers, (4) art, tv film, (5) fashion, cooking, beauty, (6) college univ, online gaming, sports playing, (7) parenting, religion, sports fandom, food, family, and (8) shopping, chatter, photo sharing.
+To understand market segmentation easier, we suggested eight groups from diverse categorized items. That is (1)chatter, shopping, photo_sharing. (2)health nutrition, personal fitness, outdoors. (3) fashion, cooking, beauty, (4)college univ, online gaming, sports playing, (5)eco, home and garden, crafts, (6)current_events, small_business, business, news, (7) computers, travel, politics, dating, and (8) music, tv_film, news.
 
-Also, we combined the result of these groups and the linear probability model and estimated which kind of groups were close to "uncategorized". From the result, we could think "uncategorized" tweets might be related to "art", "tv film", and "business".
+Also, we combined the result of these groups and the linear probability model and estimated which kind of groups were close to "uncategorized". From the result, we could think "uncategorized" tweets might be related to "current_events", "business", "small_business", and "news".
 
 ### Suggestion for "NutrientH20"
 
 For "NutrientH20", we suggested some points from these result. The first one is "NutrientH20" should set one targets from eight groups to sell drinks. As we showed, eight groups are related to one each other. Also, it is not realistic to target all categorized consumer but they can do to one of eight groups. So please refer to eight groups that we identified when making a strategy on market targeting.
 
-Second, if "NutrientH20" find "uncategorized" tweets, they should think that they are in (2), (7) and (8) out of eight groups. This is helpful if they make a plan of market research in real, such as save their time to being confusing which kind of groups they should put uncategorized tweets into.
+Second, if "NutrientH20" find "uncategorized" tweets, they should think that the probability that they are in (1) and (6) out of eight groups is high. And, specifically, (6) is mostly plausible. This is helpful if they make a plan of market research in real, such as save their time to being confusing which kind of groups they should put uncategorized tweets into.
 
 ## 2-5 Appendix
 
@@ -498,25 +517,25 @@ lm(formula = uncategorized ~ PC1 + PC2 + PC3 + PC4 + PC5 + PC6 +
 
 Residuals:
      Min       1Q   Median       3Q      Max 
--0.04850 -0.02167 -0.00760  0.01287  0.35468 
+-0.04847 -0.02169 -0.00761  0.01287  0.35466 
 
 Coefficients:
               Estimate Std. Error t value Pr(>|t|)    
-(Intercept)  0.0230056  0.0003588  64.112  < 2e-16 ***
-PC1         -0.0015385  0.0002111  -7.288 3.49e-13 ***
-PC2          0.0008640  0.0002211   3.907 9.42e-05 ***
-PC3         -0.0005596  0.0002319  -2.413   0.0158 *  
-PC4         -0.0004999  0.0002451  -2.039   0.0414 *  
-PC5         -0.0003249  0.0002535  -1.282   0.2000    
-PC6         -0.0027772  0.0002842  -9.774  < 2e-16 ***
-PC7          0.0006390  0.0002976   2.147   0.0318 *  
-PC8          0.0007779  0.0003287   2.366   0.0180 *  
+(Intercept)  0.0230120  0.0003590  64.107  < 2e-16 ***
+PC1          0.0015361  0.0002112   7.273 3.87e-13 ***
+PC2         -0.0008606  0.0002213  -3.890 0.000101 ***
+PC3          0.0005582  0.0002319   2.407 0.016112 *  
+PC4          0.0004989  0.0002452   2.035 0.041920 *  
+PC5          0.0003274  0.0002535   1.291 0.196586    
+PC6          0.0027759  0.0002843   9.765  < 2e-16 ***
+PC7         -0.0006407  0.0002977  -2.152 0.031408 *  
+PC8         -0.0007794  0.0003288  -2.371 0.017788 *  
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 0.03068 on 7300 degrees of freedom
-Multiple R-squared:  0.02481,	Adjusted R-squared:  0.02374 
-F-statistic: 23.22 on 8 and 7300 DF,  p-value: < 2.2e-16
+Residual standard error: 0.03068 on 7297 degrees of freedom
+Multiple R-squared:  0.02476,	Adjusted R-squared:  0.02369 
+F-statistic: 23.16 on 8 and 7297 DF,  p-value: < 2.2e-16
 ```
 
 \newpage

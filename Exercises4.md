@@ -123,15 +123,49 @@ the conclusion.
 At first, We used social\_marketing.csv as a data, and did data cleaning
 as follow:
 
-1.  in actual data, we crate a dummy variable that is spam or not.
+1.  in actual data, we crate a dummy variable that is spam or not.<br>
 2.  with logit model(dependent variable: spam dummy, independent
-    variable: all other variables), estimates the probability of spam by
-    each individuals.
-3.  if the probability of spam is over 0.5(50%), the person are judge as
-    a spam.
-4.  Remove actual spam, adult and estimated spam from raw dataset. So
+    variable: following variables), estimates the probability of spam by
+    each individuals. <br>
+
+$$
+\begin{aligned}
+spam&=\beta\_0+\beta \[ adult\times(all\\ variables)+uncategorized\times(all\\ variables) \\\\&+dating\times(all\\ variables)+news\times(all\\ variables)+current\_events\times(all\\ variables)\]+\varepsilon
+\end{aligned}
+$$
+
+1.  if the probability of spam is over 0.5(50%), the person are judge as
+    a spam.<br>
+2.  Remove actual spam, adult and estimated spam from raw dataset. So
     the number of observation in new dataset will decrease from 7882 to
-    7309.
+    7306.<br>
+
+Note that the indicies of the result of the logit model is as follow:
+
+<table>
+<caption>the output of LPM and Logit</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">accuracy</th>
+<th style="text-align: right;">TPR</th>
+<th style="text-align: right;">FPR</th>
+<th style="text-align: right;">FDR</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0.994</td>
+<td style="text-align: right;">0.55</td>
+<td style="text-align: right;">3e-04</td>
+<td style="text-align: right;">0.1</td>
+</tr>
+</tbody>
+</table>
+
+the output of LPM and Logit
+
+From the result, although TPR is 55%(that is the maximum value that I
+found), other variables shows good result.
 
 ## 2-3 Model and Results
 
@@ -161,15 +195,14 @@ categoriesed item as follow:
 From these above graphs, we can identify eight groups on market segments
 as follow:
 
-1.  (PC1) business small business, current events <br>
-2.  (PC2) crafts, home and garden dating, school <br>
-3.  (PC3) personal fitness, health nutrition, outdoors, travel,
-    politics, computers <br>
-4.  (PC4) art, tv film <br>
-5.  (PC5) fashion, cooking, beauty <br>
-6.  (PC6) college univ, online gaming, sports playing<br>
-7.  (PC7) parenting, religion, sports fandom, food, family <br>
-8.  (PC8) shopping, chatter, photo sharing <br>
+1.  (PC1) chatter, shopping, photo\_sharing <br>
+2.  (PC2) health nutrition, personal fitness, outdoors<br>
+3.  (PC3) fashion, cooking, beauty <br>
+4.  (PC4) college univ, online gaming, sports playing<br>
+5.  (PC5) eco, home and garden, crafts<br>
+6.  (PC6) current\_events, small\_business, business, news
+7.  (PC7) computers, travel, politics, dating
+8.  (PC8) music, tv\_film, news
 
 We also did robustness check with K-means method in Appendix 2-5-1.
 
@@ -189,35 +222,35 @@ Appendix). The coefficients that I got from the estimation is as follow:
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">PC1</td>
-<td style="text-align: left;">-0.00154***</td>
+<td style="text-align: left;">0.0015361***</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">PC2</td>
-<td style="text-align: left;">0.00086***</td>
+<td style="text-align: left;">-0.0008606***</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">PC3</td>
-<td style="text-align: left;">-0.00056*</td>
+<td style="text-align: left;">0.0005582*</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">PC4</td>
-<td style="text-align: left;">-0.00050*</td>
+<td style="text-align: left;">0.0004989*</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">PC5</td>
-<td style="text-align: left;">-0.00032</td>
+<td style="text-align: left;">0.0003274</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">PC6</td>
-<td style="text-align: left;">-0.00278***</td>
+<td style="text-align: left;">0.00277598***</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">PC7</td>
-<td style="text-align: left;">0.00064*</td>
+<td style="text-align: left;">-0.0006407*</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">PC8</td>
-<td style="text-align: left;">0.00078*</td>
+<td style="text-align: left;">-0.0007794*</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Intercept</td>
@@ -226,27 +259,26 @@ Appendix). The coefficients that I got from the estimation is as follow:
 </tbody>
 </table>
 
-From the result, PC2, PC7 and PC8 are the almost same positive
-coefficients. Combined Combined with Correlation and PCA’s heatmap, we
-can think **the uncategorized tweet might be related to “art”, “tv
-film”, and “business”**
+From the result, PC1 and PC6 are the positive coefficients and high
+coefficient values, and out of them the coefficient of the PC6 is
+highest. So we can think **the uncategorized tweet might be related to
+“current\_events”, “business”, “small\_business”, and “news”**
 
 ## 2-4 Conclusion
 
 ### Summarized our results
 
 To understand market segmentation easier, we suggested eight groups from
-diverse categorized items. That is (1) business small business, current
-events, (2) crafts, home and garden dating, school, (3) personal
-fitness, health nutrition, outdoors, travel, politics, computers, (4)
-art, tv film, (5) fashion, cooking, beauty, (6) college univ, online
-gaming, sports playing, (7) parenting, religion, sports fandom, food,
-family, and (8) shopping, chatter, photo sharing.
+diverse categorized items. That is (1)chatter, shopping, photo\_sharing.
+(2)health nutrition, personal fitness, outdoors. (3) fashion, cooking,
+beauty, (4)college univ, online gaming, sports playing, (5)eco, home and
+garden, crafts, (6)current\_events, small\_business, business, news, (7)
+computers, travel, politics, dating, and (8) music, tv\_film, news.
 
 Also, we combined the result of these groups and the linear probability
 model and estimated which kind of groups were close to “uncategorized”.
 From the result, we could think “uncategorized” tweets might be related
-to “art”, “tv film”, and “business”.
+to “current\_events”, “business”, “small\_business”, and “news”.
 
 ### Suggestion for “NutrientH20”
 
@@ -258,9 +290,10 @@ to one of eight groups. So please refer to eight groups that we
 identified when making a strategy on market targeting.
 
 Second, if “NutrientH20” find “uncategorized” tweets, they should think
-that they are in (2), (7) and (8) out of eight groups. This is helpful
-if they make a plan of market research in real, such as save their time
-to being confusing which kind of groups they should put uncategorized
+that the probability that they are in (1) and (6) out of eight groups is
+high. And, specifically, (6) is mostly plausible. This is helpful if
+they make a plan of market research in real, such as save their time to
+being confusing which kind of groups they should put uncategorized
 tweets into.
 
 ## 2-5 Appendix
@@ -299,25 +332,25 @@ Also the detailed of the result is as follow:
 
     Residuals:
          Min       1Q   Median       3Q      Max 
-    -0.04850 -0.02167 -0.00760  0.01287  0.35468 
+    -0.04847 -0.02169 -0.00761  0.01287  0.35466 
 
     Coefficients:
                   Estimate Std. Error t value Pr(>|t|)    
-    (Intercept)  0.0230056  0.0003588  64.112  < 2e-16 ***
-    PC1         -0.0015385  0.0002111  -7.288 3.49e-13 ***
-    PC2          0.0008640  0.0002211   3.907 9.42e-05 ***
-    PC3         -0.0005596  0.0002319  -2.413   0.0158 *  
-    PC4         -0.0004999  0.0002451  -2.039   0.0414 *  
-    PC5         -0.0003249  0.0002535  -1.282   0.2000    
-    PC6         -0.0027772  0.0002842  -9.774  < 2e-16 ***
-    PC7          0.0006390  0.0002976   2.147   0.0318 *  
-    PC8          0.0007779  0.0003287   2.366   0.0180 *  
+    (Intercept)  0.0230120  0.0003590  64.107  < 2e-16 ***
+    PC1          0.0015361  0.0002112   7.273 3.87e-13 ***
+    PC2         -0.0008606  0.0002213  -3.890 0.000101 ***
+    PC3          0.0005582  0.0002319   2.407 0.016112 *  
+    PC4          0.0004989  0.0002452   2.035 0.041920 *  
+    PC5          0.0003274  0.0002535   1.291 0.196586    
+    PC6          0.0027759  0.0002843   9.765  < 2e-16 ***
+    PC7         -0.0006407  0.0002977  -2.152 0.031408 *  
+    PC8         -0.0007794  0.0003288  -2.371 0.017788 *  
     ---
     Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-    Residual standard error: 0.03068 on 7300 degrees of freedom
-    Multiple R-squared:  0.02481,   Adjusted R-squared:  0.02374 
-    F-statistic: 23.22 on 8 and 7300 DF,  p-value: < 2.2e-16
+    Residual standard error: 0.03068 on 7297 degrees of freedom
+    Multiple R-squared:  0.02476,   Adjusted R-squared:  0.02369 
+    F-statistic: 23.16 on 8 and 7297 DF,  p-value: < 2.2e-16
 
 # Association rules for grocery purchases
 
